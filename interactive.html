@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Greeting App | SaraITech</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg,  #3498db, #2c3e50);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+            animation: gradientAnimation 15s ease infinite;
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .app-title {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #3498db, #2c3e50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.3rem;
+            font-weight: 500;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 25px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #495057;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input groups */
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+            background-color: #fff;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 180px;
+            padding: 16px;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, #27ae60, #219653);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn:active {
+            transform: translateY(-2px);
+        }
+
+        /* Message display */
+        .message-container {
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 20px;
+            font-size: 1.8rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.6;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed #ced4da;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-out;
+        }
+
+        .message-container.error {
+            background: linear-gradient(135deg, #fff5f5, #ffecec) !important;
+            color: #e74c3c;
+            border: 2px solid #fadbd8 !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: shake 0.6s ease;
+        }
+
+        .message-container.success {
+            background: linear-gradient(135deg, #f0fdf4, #e6f7ee) !important;
+            color: #27ae60;
+            border: 2px solid #d4efdf !important;
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-12px); }
+            40%, 80% { transform: translateX(12px); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Custom Greetings Section */
+        .custom-greetings {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .greeting-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .greeting-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+        }
+
+        .greeting-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .greeting-content {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.5;
+            flex-grow: 1;
+            font-weight: 500;
+        }
+
+        .greeting-author {
+            font-style: italic;
+            color: #6c757d;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .greeting-author i {
+            color: #3498db;
+        }
+
+        .rating-section {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .rating-label {
+            margin-right: 10px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star:hover, .star.active {
+            color: #FFD700;
+        }
+
+        .average-rating {
+            margin-left: auto;
+            font-weight: 600;
+            color: #2c3e50;
+            background: #f8f9fa;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .reviews-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #dee2e6;
+        }
+
+        .reviews-section h4 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .review-text {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .review-rating {
+            color: #FFD700;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .review-author {
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .no-reviews {
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .add-review {
+            margin-top: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .review-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .review-input input {
+            padding: 12px 15px;
+            font-size: 1rem;
+        }
+
+        .review-input button {
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .review-input button:hover {
+            background: #2c3e50;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .app-title {
+                font-size: 2.2rem;
+            }
+            
+            .btn {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .message-container {
+                font-size: 1.5rem;
+                padding: 25px 20px;
+            }
+            
+            .custom-greetings {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-title {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            input, textarea {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo">
+                <i class="fas fa-code"></i>
+            </div>
+            <h1 class="app-title">Interactive Greeting App</h1>
+        </div>
+        
+        <p class="subtitle">Create, share, and review greetings with the community</p>
+        
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="greet">Get Greeted</button>
+            <button class="tab-btn" data-tab="create">Create Greeting</button>
+            <button class="tab-btn" data-tab="browse">Browse Greetings</button>
+        </div>
+        
+        <!-- Greet Tab -->
+        <div class="tab-content active" id="greet-tab">
+            <div class="input-group">
+                <label for="nameInput"><i class="fas fa-user-circle"></i> Your Name:</label>
+                <input type="text" id="nameInput" placeholder="Enter your name here">
+            </div>
+            
+            <div class="button-group">
+                <button id="greetBtn" class="btn btn-primary">
+                    <i class="fas fa-hand-sparkles"></i> Greet Me
+                </button>
+                <button id="restartBtn" class="btn btn-secondary">
+                    <i class="fas fa-redo-alt"></i> Restart
+                </button>
+            </div>
+            
+            <div class="message-container" id="message"></div>
+        </div>
+        
+        <!-- Create Greeting Tab -->
+        <div class="tab-content" id="create-tab">
+            <div class="input-group">
+                <label for="greetingText"><i class="fas fa-comment"></i> Your Greeting:</label>
+                <textarea id="greetingText" placeholder="Create your own greeting (use {name} where the name should appear)"></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label for="greetingAuthor"><i class="fas fa-user"></i> Your Name (Author):</label>
+                <input type="text" id="greetingAuthor" placeholder="Enter your name as author">
+            </div>
+            
+            <button id="addGreetingBtn" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Add Greeting
+            </button>
+            
+            <div class="message-container" id="greetingMessage"></div>
+        </div>
+        
+        <!-- Browse Greetings Tab -->
+        <div class="tab-content" id="browse-tab">
+            <div class="custom-greetings" id="greetingsContainer">
+                <!-- Greeting cards will be dynamically added here -->
+            </div>
+        </div>
+        
+        <footer>
+            <i class="fas fa-laptop-code"></i> &copy; 2023 SaraITech - Where Everything becomes Saral
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const greetBtn = document.getElementById('greetBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const nameInput = document.getElementById('nameInput');
+            const messageDiv = document.getElementById('message');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const addGreetingBtn = document.getElementById('addGreetingBtn');
+            const greetingText = document.getElementById('greetingText');
+            const greetingAuthor = document.getElementById('greetingAuthor');
+            const greetingMessage = document.getElementById('greetingMessage');
+            const greetingsContainer = document.getElementById('greetingsContainer');
+            
+            // Sample greetings data
+            let customGreetings = [
+                {
+                    id: 1,
+                    text: "Welcome, {name}! Great to have you here today!",
+                    author: "SaraITech Team",
+                    ratings: [4, 5, 5],
+                    reviews: [
+                        {text: "Love this greeting! Perfect for our company website.", rating: 5, author: "Alex Johnson"},
+                        {text: "Professional and welcoming", rating: 4, author: "Taylor Smith"}
+                    ]
+                },
+                {
+                    id: 2,
+                    text: "Hey {name}! Ready to create something amazing?",
+                    author: "Web Dev Team",
+                    ratings: [5, 4, 5, 3],
+                    reviews: [
+                        {text: "My favorite greeting! Always puts a smile on my face.", rating: 5, author: "Jordan Lee"},
+                        {text: "Very motivational - great for onboarding new team members", rating: 4, author: "Casey Brown"}
+                    ]
+                },
+                {
+                    id: 3,
+                    text: "Salutations, {name}! The future is bright!",
+                    author: "Design Team",
+                    ratings: [4, 4, 5],
+                    reviews: [
+                        {text: "Unique and classy. Stands out from generic greetings.", rating: 4, author: "Riley Martinez"},
+                        {text: "Perfect for formal occasions and professional settings", rating: 5, author: "Morgan Taylor"}
+                    ]
+                }
+            ];
+            
+            let nextId = 4;
+            
+            // Initialize the app
+            function initApp() {
+                renderCustomGreetings();
+                setupEventListeners();
+            }
+            
+            // Set up event listeners
+            function setupEventListeners() {
+                // Greeting functionality
+                greetBtn.addEventListener('click', generateGreeting);
+                restartBtn.addEventListener('click', resetGreeting);
+                
+                // Enter key functionality
+                nameInput.addEventListener('keyup', function(event) {
+                    if (event.key === 'Enter') {
+                        generateGreeting();
+                    }
+                });
+                
+                // Tab switching
+                tabBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tabId = this.getAttribute('data-tab');
+                        switchTab(tabId);
+                    });
+                });
+                
+                // Add custom greeting
+                addGreetingBtn.addEventListener('click', addCustomGreeting);
+            }
+            
+            // Switch tabs
+            function switchTab(tabId) {
+                // Update active tab button
+                tabBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-tab') === tabId) {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                // Show active tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${tabId}-tab`) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Refresh greetings display when browsing tab is opened
+                if (tabId === 'browse') {
+                    renderCustomGreetings();
+                }
+            }
+            
+            // Generate personalized greeting
+            function generateGreeting() {
+                const userName = nameInput.value.trim();
+                
+                // Reset previous states
+                messageDiv.className = 'message-container';
+                messageDiv.innerHTML = '';
+                
+                // Input validation
+                if (!userName) {
+                    messageDiv.textContent = 'Please enter your name first!';
+                    messageDiv.classList.add('error');
+                    return;
+                }
+                
+                // Combine default and custom greetings
+                const allGreetings = [
+                    `Hello, ${userName}! Great to see you today!`,
+                    `Hi there, ${userName}! Have a wonderful day!`,
+                    `Greetings, ${userName}! Hope you're doing well!`,
+                    `Welcome, ${userName}! Ready to create something amazing?`,
+                    `Hey ${userName}! You're looking great today!`,
+                    `Nice to meet you, ${userName}! Let's build something together!`,
+                    `Howdy, ${userName}! Let's make today count!`
+                ];
+                
+                // Add custom greetings
+                customGreetings.forEach(greeting => {
+                    allGreetings.push(greeting.text.replace('{name}', userName));
+                });
+                
+                // Random greeting selection
+                const randomGreeting = allGreetings[Math.floor(Math.random() * allGreetings.length)];
+                messageDiv.textContent = randomGreeting;
+                
+                // Apply success styling and animation
+                setTimeout(() => {
+                    messageDiv.classList.add('success');
+                }, 10);
+            }
+            
+            // Reset greeting
+            function resetGreeting() {
+                nameInput.value = '';
+                messageDiv.className = 'message-container';
+                messageDiv.innerHTML = '';
+                nameInput.focus();
+            }
+            
+            // Add custom greeting
+            function addCustomGreeting() {
+                const text = greetingText.value.trim();
+                const author = greetingAuthor.value.trim();
+                
+                // Reset message
+                greetingMessage.textContent = '';
+                greetingMessage.className = 'message-container';
+                
+                // Validation
+                if (!text || !author) {
+                    greetingMessage.textContent = 'Please fill in both fields!';
+                    greetingMessage.classList.add('error');
+                    return;
+                }
+                
+                if (!text.includes('{name}')) {
+                    greetingMessage.textContent = 'Your greeting must include "{name}" where the name should appear';
+                    greetingMessage.classList.add('error');
+                    return;
+                }
+                
+                // Create new greeting
+                const newGreeting = {
+                    id: nextId++,
+                    text: text,
+                    author: author,
+                    ratings: [],
+                    reviews: []
+                };
+                
+                customGreetings.push(newGreeting);
+                
+                // Success message
+                greetingMessage.textContent = 'Your greeting has been added successfully!';
+                greetingMessage.classList.add('success');
+                
+                // Clear inputs
+                greetingText.value = '';
+                greetingAuthor.value = '';
+                
+                // Switch to browse tab to see the new greeting
+                setTimeout(() => {
+                    switchTab('browse');
+                    renderCustomGreetings();
+                }, 1000);
+            }
+            
+            // Render custom greetings
+            function renderCustomGreetings() {
+                greetingsContainer.innerHTML = '';
+                
+                if (customGreetings.length === 0) {
+                    greetingsContainer.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                            <i class="fas fa-comment-slash" style="font-size: 3rem; color: #6c757d; margin-bottom: 20px;"></i>
+                            <h3 style="color: #495057;">No custom greetings yet</h3>
+                            <p style="color: #6c757d; margin-top: 10px;">Be the first to create a greeting!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                customGreetings.forEach(greeting => {
+                    const card = document.createElement('div');
+                    card.className = 'greeting-card';
+                    card.innerHTML = `
+                        <div class="greeting-content">${greeting.text.replace('{name}', '<span style="color:#3498db; font-weight:600;">[Name]</span>')}</div>
+                        <div class="greeting-author"><i class="fas fa-user"></i> ${greeting.author}</div>
+                        
+                        <div class="rating-section">
+                            <div class="rating-label">Rate this greeting:</div>
+                            <div class="stars">
+                                <span class="star" data-rating="1">☆</span>
+                                <span class="star" data-rating="2">☆</span>
+                                <span class="star" data-rating="3">☆</span>
+                                <span class="star" data-rating="4">☆</span>
+                                <span class="star" data-rating="5">☆</span>
+                            </div>
+                            <div class="average-rating">
+                                <i class="fas fa-star"></i> ${calculateAverageRating(greeting.ratings)}
+                            </div>
+                        </div>
+                        
+                        <div class="reviews-section">
+                            <h4><i class="fas fa-comments"></i> Reviews (${greeting.reviews.length})</h4>
+                            ${greeting.reviews.length > 0 ? 
+                                greeting.reviews.map(review => `
+                                    <div class="review-item">
+                                        <div class="review-text">${review.text}</div>
+                                        <div class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                                        <div class="review-author">- ${review.author}</div>
+                                    </div>
+                                `).join('') : 
+                                '<div class="no-reviews">No reviews yet. Be the first to review!</div>'}
+                            
+                            <div class="add-review">
+                                <input type="text" class="review-input-text" placeholder="Write your review...">
+                                <div class="review-input">
+                                    <input type="text" class="review-author-input" placeholder="Your name">
+                                    <button class="btn-add-review" data-id="${greeting.id}">
+                                        <i class="fas fa-plus"></i> Add Review
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    greetingsContainer.appendChild(card);
+                    
+                    // Add star rating event listeners
+                    const stars = card.querySelectorAll('.star');
+                    stars.forEach(star => {
+                        star.addEventListener('click', function() {
+                            const rating = parseInt(this.getAttribute('data-rating'));
+                            rateGreeting(greeting.id, rating);
+                            
+                            // Update star display
+                            stars.forEach((s, i) => {
+                                if (i < rating) {
+                                    s.classList.add('active');
+                                } else {
+                                    s.classList.remove('active');
+                                }
+                            });
+                        });
+                    });
+                    
+                    // Add review event listener
+                    const addReviewBtn = card.querySelector('.btn-add-review');
+                    addReviewBtn.addEventListener('click', function() {
+                        const reviewText = card.querySelector('.review-input-text').value.trim();
+                        const reviewAuthor = card.querySelector('.review-author-input').value.trim();
+                        
+                        if (reviewText && reviewAuthor) {
+                            addReview(greeting.id, reviewText, reviewAuthor);
+                            
+                            // Clear inputs after adding
+                            card.querySelector('.review-input-text').value = '';
+                            card.querySelector('.review-author-input').value = '';
+                        }
+                    });
+                });
+            }
+            
+            // Calculate average rating
+            function calculateAverageRating(ratings) {
+                if (ratings.length === 0) return '0.0';
+                const sum = ratings.reduce((a, b) => a + b, 0);
+                const avg = sum / ratings.length;
+                return `${avg.toFixed(1)} (${ratings.length} ratings)`;
+            }
+            
+            // Rate a greeting
+            function rateGreeting(id, rating) {
+                const greeting = customGreetings.find(g => g.id === id);
+                if (greeting) {
+                    greeting.ratings.push(rating);
+                    renderCustomGreetings();
+                }
+            }
+            
+            // Add review to a greeting
+            function addReview(id, text, author) {
+                const greeting = customGreetings.find(g => g.id === id);
+                if (greeting) {
+                    // For demo purposes, generate a random rating between 3-5
+                    const rating = Math.floor(Math.random() * 3) + 3;
+                    
+                    greeting.reviews.push({
+                        text: text,
+                        author: author,
+                        rating: rating
+                    });
+                    
+                    renderCustomGreetings();
+                }
+            }
+            
+            // Initialize the app
+            initApp();
+        });
+    </script>
+</body>
+</html>
